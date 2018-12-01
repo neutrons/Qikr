@@ -44,32 +44,21 @@ class Sample(AbstractComponent):
         ftr = (x >= -self.xwidth / 2) * (x <= self.xwidth / 2) * (z >= -self.zheight / 2) * (z <= self.zheight / 2) * (
                     t > t0)
 
-        x = x[ftr];
-        y = y[ftr];
-        z = z[ftr];
-        vx = vx[ftr];
-        vy = -vy[ftr];
-        vz = vz[ftr];
-        s1 = s1[ftr];
-        s2 = s2[ftr];
-        t = t[ftr];
-        p = p[ftr];
+        # reflection
+        vy[ftr] *= -1
 
-        Q = conversion.V2K * 2 * vy
-        P= self.reflectivity(self.rq, Q)*p
-
-
-        events = np.array([x, y, z, t, P])
+        # adjust probability
+        Q = np.abs(conversion.V2K * 2 * vy[ftr])
+        p[ftr] *= self.reflectivity(self.rq, Q)
 
         Pneutrons = neutron_buffer(len(neutrons))
-        Pneutrons.from_npyarr(events)
-        self.events = events
-        return
+        Pneutrons.from_npyarr(arr)
+        return  Pneutrons
 
     def _propagateToY0(self, x, y, z, vx, vy, vz, t):
         dt = -y / vy
         x += vx * dt
-        y = 0
+        y[:] = 0
         z+= vz*dt
         t += dt
         return

@@ -10,9 +10,8 @@
 #
 
 
-interactive = False
-
-
+import numpy as np
+from mcni.utils import conversion as conv
 import unittest as unittest
 
 
@@ -24,21 +23,31 @@ class TestCase(unittest.TestCase):
         
         from sample_component import Sample
 
-        rq = lambda Q: Q * 0.5 + 1
+        rq = lambda Q: np.exp(-Q*Q/25)
 
         s = Sample('sample', 5, 5, rq)
 
         from mcni import neutron_buffer, neutron
         N = 8
-        n = neutron_buffer(N)
+        nb = neutron_buffer(N)
+        t = 1.
         for i in range(N):
-            n[i] = neutron(r=(0,1,0), v=(0,3000,0), s=(0,1), time=1000., prob=10.)
+            vi = np.array((0,-(i+1)*100,(i+1)*100))
+            ri = -vi*t
+            nb[i] = neutron(r=ri, v=vi, s=(0,0), time=0., prob=1.)
             continue
 
-        s.process(n)
-
-        r = s.events
-
+        nb2 = s.process(nb)
+        for i, (n, n2) in enumerate(zip(nb, nb2)):
+            # print "input:", n
+            # print "output:", n2
+            vf = np.array((0,(i+1)*100,(i+1)*100))
+            np.allclose(vf, n2.state.velocity)
+            np.allclose([0,0,0], n2.state.position)
+            np.isclose(n2.time, 1.)
+            vy = vf[1]
+            Q = np.abs(vy*2) * conv.V2K
+            np.isclose(rq(Q), n2.probability)
         return
 
     def test2(self):
@@ -59,7 +68,6 @@ class TestCase(unittest.TestCase):
 
         s.process(n)
 
-        r = s.events
         return
 
     def test3(self):
@@ -80,7 +88,6 @@ class TestCase(unittest.TestCase):
 
         s.process(n)
 
-        r = s.events
         return
 
     def test4(self):
@@ -101,34 +108,15 @@ class TestCase(unittest.TestCase):
 
         s.process(n)
 
-        r = s.events
         return
         
 
     pass # end of TestCase
 
 
-def pysuite():
-    suite1 = unittest.makeSuite(TestCase)
-    return unittest.TestSuite( (suite1,) )
-
-
-def main():
-    #debug.activate()
-    pytests = pysuite()
-    alltests = unittest.TestSuite( (pytests, ) )
-    res = unittest.TextTestRunner(verbosity=2).run(alltests)
-    import sys; sys.exit(not res.wasSuccessful())
-
-    return
-
 
 if __name__ == "__main__": 
-    interactive = True
-    main()
+    unittest.main()
 
     
-# version
-__id__ = "$Id$"
-
 # End of file 
