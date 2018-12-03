@@ -30,10 +30,10 @@ install:
   - conda config --add channels conda-forge
   - conda config --add channels diffpy
   - conda config --add channels mantid
-  - conda config --add channels numpy=1.14 mcvine
+  - conda config --add channels mcvine
   - conda create -n testenv python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
-  - conda install mcvine
+  - conda install numpy=1.14  mcvine
 
 script:
   - python TestSample.py
