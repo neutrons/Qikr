@@ -36,6 +36,6 @@ install:
   - conda install mcvine
 
 script:
-  - python -c TestSample.py
+  - python TestSample.py
 
 
