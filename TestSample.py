@@ -21,7 +21,6 @@ class TestCase(unittest.TestCase):
 
     def test1(self):
         'Neutrons_from above'
-        
 
         rq = lambda Q: np.exp(-Q*Q/25)
 
