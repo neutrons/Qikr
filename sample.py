@@ -51,9 +51,8 @@ class Sample(AbstractComponent):
         Q = np.abs(conversion.V2K * 2 * vy[ftr])
         p[ftr] *= self.reflectivity(self.rq, Q)
 
-        Pneutrons = neutron_buffer(len(neutrons))
-        Pneutrons.from_npyarr(arr)
-        return  Pneutrons
+        neutrons.from_npyarr(arr)
+        return  neutrons
 
     def _propagateToY0(self, x, y, z, vx, vy, vz, t):
         dt = -y / vy

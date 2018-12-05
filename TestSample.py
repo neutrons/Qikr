@@ -13,6 +13,7 @@
 import numpy as np
 from mcni.utils import conversion as conv
 import unittest as unittest
+from sample import Sample
 
 
 class TestCase(unittest.TestCase):
@@ -20,8 +21,6 @@ class TestCase(unittest.TestCase):
 
     def test1(self):
         'Neutrons_from above'
-        
-        from sample_component import Sample
 
         rq = lambda Q: np.exp(-Q*Q/25)
 
@@ -53,8 +52,6 @@ class TestCase(unittest.TestCase):
     def test2(self):
         'Neutrons_from below'
 
-        from sample_component import Sample
-
         rq = lambda Q: Q * 0.5 + 1
 
         s = Sample('sample', 5, 5, rq)
@@ -73,8 +70,6 @@ class TestCase(unittest.TestCase):
     def test3(self):
         'Neutrons parallel to the surface'
 
-        from sample_component import Sample
-
         rq = lambda Q: Q * 0.5 + 1
 
         s = Sample('sample', 5, 5, rq)
@@ -92,8 +87,6 @@ class TestCase(unittest.TestCase):
 
     def test4(self):
         'Neutrons passed the surface'
-
-        from sample_component import Sample
 
         rq = lambda Q: Q * 0.5 + 1
 
