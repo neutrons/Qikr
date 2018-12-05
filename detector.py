@@ -9,7 +9,7 @@ class Detector(AbstractComponent):
 
     "2D detector center a (0,0,0) and perpendicular to z"
 
-    def __init__(self, name, xwidth, yheight, dx, dy, outfile):
+    def __init__(self, name, xwidth, yheight, dx, dy, outfile, tofbinsize=0.1):
         self.name = name
         assert xwidth > 0 and yheight > 0 and dx>0 and dy>0
         self.xwidth = xwidth
@@ -20,6 +20,7 @@ class Detector(AbstractComponent):
         self.Ny = int(yheight/dy)
         print (self.Nx, self.Ny)
         self.outfile = outfile
+        self.tofbinsize = tofbinsize
         return
 
     def process(self, neutrons):
@@ -46,7 +47,12 @@ class Detector(AbstractComponent):
         xindex = (x+self.xwidth/2)//self.dx; xindex[xindex<0] = 0; xindex[xindex>=self.Nx]=self.Nx-1
         yindex = (y+self.yheight/2)//self.dy; yindex[yindex<0] = 0; yindex[yindex>=self.Ny]=self.Ny-1
         index = yindex + xindex * self.Ny
-        events = np.array([index[ftr], t[ftr], p[ftr]])
+        N = ftr.sum()
+        from mccomponents.detector.event_utils import datatype
+        events = np.zeros(N, dtype=datatype)
+        events['pixelID'] = index[ftr]
+        events['tofChannelNo']=t[ftr]*1e6/self.tofbinsize
+        events['p'] = p[ftr]
         self._save(events)
         return
     
