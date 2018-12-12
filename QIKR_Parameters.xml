@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<parameter-file instrument = "QIKR" valid-from="2014-10-10 00:00:02" valid-to="2100-01-31 23:59:59">
+
+  <component-link name = "QIKR">
+
+    <parameter name="number-of-x-pixels">
+      <value val="256"/>
+    </parameter>
+
+    <parameter name="number-of-y-pixels">
+      <value val="304"/>
+    </parameter>
+
+    <parameter name="pixel-width">
+      <value val="0.7"/>
+    </parameter>
+  </component-link>
+
+</parameter-file>
+
+

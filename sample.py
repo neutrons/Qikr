@@ -33,6 +33,7 @@ class Sample(AbstractComponent):
         vy = arr[:, 4];
         vz = arr[:, 5]
         t = arr[:, 8];
+        t0 = t.copy()
         p = arr[:, 9]
 
         # Propagate to y = 0
@@ -43,17 +44,19 @@ class Sample(AbstractComponent):
 
         # Filter
         do_filter = True
-        ftr = (x >= -self.xwidth / 2) * (x <= self.xwidth / 2) * (y >= -self.zheight / 2) * (y <= self.zheight / 2)
+        ftr = (x >= -self.xwidth / 2) * (x <= self.xwidth / 2) * (y >= -self.zheight / 2) * (y <= self.zheight / 2) * (t > t0)
 
         # Reflection
         speed = np.sqrt(vx**2+vy**2+vz**2)
         if do_filter:
             vy[ftr] *= -1
-            q = 2.0*conversion.V2K*speed[ftr] * vy[ftr]/vz[ftr]
+            #q = 2.0*conversion.V2K*speed[ftr] * vy[ftr]/vz[ftr]
+            q = 2.0*conversion.V2K*vy[ftr]
             p[ftr] *= self.reflectivity(self.rq, q)
         else:
             vy *= -1
-            q = 2.0*conversion.V2K*speed * vy/vz
+            #q = 2.0*conversion.V2K*speed * vy/vz
+            q = 2.0*conversion.V2K*vy
             p *= self.reflectivity(self.rq, q)
 
         if DEBUG:
@@ -73,10 +76,14 @@ class Sample(AbstractComponent):
         dist = tof * vz
         cst = dist / h * m
         wl  = tof / cst * 1e10
-        k = conversion.V2K*vz
+        
+        speed = np.sqrt(vx**2+vy**2+vz**2)
+        k = conversion.V2K*speed
         wl2 = 2.0 * np.pi / k
+
+
         q = 4.0*np.pi/wl * vy/vz
-        theta = np.arcsin(vy/vz) * 180.0 / np.pi
+        theta = np.arcsin(vy/speed) * 180.0 / np.pi
         print "z = %s    wl = %s (%s)   q = %s (%s)   theta = %s" % (dist, wl, wl2, q, q0, theta)
 
     def _propagateToY0(self, x, y, z, vx, vy, vz, t):

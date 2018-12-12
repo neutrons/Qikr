@@ -56,7 +56,6 @@ def qikr(wl_0=1., center_wl=13.05):
     print ("Ballistic guide 2: %s m" % running_length)
     running_length += guide_2_length + 0.0001
 
-    
     # Bandwidth chopper ############################################################
     # From 714.8 cm to 722.1 cm
     instrument.append(mcvine.components.monitors.NeutronToStorage('save_pre', 'beam_pre_chopper.neutrons'),
@@ -86,7 +85,6 @@ def qikr(wl_0=1., center_wl=13.05):
                       position=(0,0,running_length))
     running_length += b_chopper_length + 0.0001
 
-
     # Ballistic Guide 3 #############################################################
     # From 722.1 cm to 1264 cm
     guide_3_length = 5.419
@@ -109,5 +107,6 @@ def qikr(wl_0=1., center_wl=13.05):
     instrument.append(mcvine.components.monitors.NeutronToStorage('save', 'beam.neutrons'),
                       position=(0,0,running_length))
     running_length += 0.0001
+    print("End of instrument: %s m" % running_length)
 
     return instrument
